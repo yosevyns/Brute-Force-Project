@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spotify Data Analysis</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <style>
+    body {
+      padding: 20px;
+      background-color: #f8f9fa; /* Warna latar belakang */
+      color: #495057; /* Warna teks utama */
+    }
+
+    h1 {
+      color: #1DB954;
+    }
+
+    form {
+      margin-top: 20px;
+      background-color: #ffffff; /* Warna latar belakang formulir */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Efek bayangan pada formulir */
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    button {
+      background-color: #1DB954;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease; /* Animasi perubahan warna ketika hover */
+    }
+
+    button:hover {
+      background-color: #128038;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-top: 20px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Efek bayangan pada gambar */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Spotify Data Analysis</h1>
+
+    <form method="post" action="/">
+      <div class="form-group">
+        <label for="stream_min">Minimum Total Streams:</label>
+        <input type="number" class="form-control" name="stream_min" id="stream_min" min="1" />
+      </div>
+
+      <div class="form-group">
+        <label for="days_min">Minimum Days:</label>
+        <input type="number" class="form-control" name="days_min" id="days_min" min="1" />
+      </div>
+
+      <div class="form-group">
+        <label for="artists">Artists (comma-separated):</label>
+        <select class="js-example-basic-multiple-limit form-control" name="artists" id="artists" multiple="multiple">
+        </select>
+      </div>
+    
+
+      <div class="form-group">
+        <label for="top_10_entries">Minimum Top 10 Entries:</label>
+        <input type="number" class="form-control" name="top_10_entries" id="top_10_entries" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="peak_position">Minimum Peak Position:</label>
+        <input type="number" class="form-control" name="peak_position" id="peak_position" min="0" />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    {% if result %}
+      <p>Lagu terpopuler berdasarkan Total Streams:</p>
+      <ul>
+        {% for row in result[0] %}
+          <li>{{ row['Song Name'] }} - {{ row['Artist Name'] }}</li>
+        {% endfor %}
+      </ul>
+
+      <p>Deskripsi lengkap:</p>
+      <p>Total Total Streams: {{ result[1] }}</p>
+
+      <p>Graph of Songs based on Total Streams:</p>
+      <img src="data:image/png;base64,{{ result[2] }}" alt="Graph of Songs" />
+    {% else %}
+      <p>Tidak ada data yang memenuhi kriteria.</p>
+    {% endif %}
+  </div>
+
+  <!-- Bootstrap JS and Popper.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+  <script>
+    $(document).ready(function() {
+        // Fetch artist names and initialize Select2
+        $.ajax({
+            url: '/get_artist_names',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                var artist_names = response.artist_names;
+                $('.js-example-basic-multiple-limit').select2({
+                    data: artist_names,
+                    tags: true, // Enable tagging (allows adding new options)
+                    tokenSeparators: [',', ' '], // Specify token separators for tagging
+                });
+            },
+            error: function(error) {
+                console.log('Error fetching artist names:', error);
+            }
+        });
+    });
+</script>
+</body>
+</html>

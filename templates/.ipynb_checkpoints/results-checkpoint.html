@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Results</title>
+  </head>
+  <body>
+    <h1>Results</h1>
+
+    {% for result in results %}
+    <h2>Constraint: {{ result.constraint }}</h2>
+    <ul>
+      {% for row in result.optimal_combination %}
+      <li>{{ row.Song }} - {{ row.Artist }} ({{ row.Streams }} streams)</li>
+      {% endfor %}
+    </ul>
+    <p>Total Streams: {{ result.total_streams }}</p>
+
+    <!-- Embed the image directly in the HTML using data URI scheme -->
+    <img
+      src="data:image/png;base64,{{ result.plot_image|b64encode }}"
+      alt="Graph of Songs"
+    />
+
+    <hr />
+    {% endfor %}
+  </body>
+</html>

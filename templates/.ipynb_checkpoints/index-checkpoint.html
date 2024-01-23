@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify Data Analysis</title>
+  </head>
+  <body>
+    <h1>Spotify Data Analysis</h1>
+
+    <form method="post" action="/">
+      <label for="stream_min">Minimum Total Streams:</label>
+      <input type="number" name="stream_min" id="stream_min" min="1" required />
+
+      <label for="days_min">Minimum Days:</label>
+      <input type="number" name="days_min" id="days_min" min="1" required />
+
+      <label for="artists">Artists (comma-separated):</label>
+      <input type="text" name="artists" id="artists" />
+
+      <label for="top_10_entries">Minimum Top 10 Entries:</label>
+      <input type="number" name="top_10_entries" id="top_10_entries" min="1" />
+
+      <label for="peak_position">Peak Position:</label>
+      <input type="number" name="peak_position" id="peak_position" min="1" />
+
+      <button type="submit">Submit</button>
+    </form>
+
+    {% if result %}
+    <p>Lagu terpopuler berdasarkan Total Streams:</p>
+    <ul>
+      {% for row in result[0] %}
+      <li>{{ row['Song Name'] }} - {{ row['Artist Name'] }}</li>
+      {% endfor %}
+    </ul>
+    <p>Deskripsi lengkap:</p>
+    <p>Total Total Streams: {{ result[1] }}</p>
+
+    <p>Graph of Songs based on Total Streams:</p>
+    <img src="data:image/png;base64,{{ result[2] }}" alt="Graph of Songs" />
+    {% else %}
+    <p>Tidak ada data yang memenuhi kriteria.</p>
+    {% endif %}
+  </body>
+</html>
